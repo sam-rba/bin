@@ -1,0 +1,17 @@
+#!/usr/bin/sh
+
+# Find CHaracter
+
+if [ $# -eq 0 ]
+then
+	echo "Usage: fch <charname>"
+	exit 2
+fi
+
+args="$@"
+awk -v charname="$args" '
+	$0 ~ charname {
+		printf "%s ",$0
+		system("9 unicode " $1)
+	}
+' /opt/plan9/lib/unicode
