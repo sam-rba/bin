@@ -1,17 +1,21 @@
-#!/usr/bin/sh
+#!/usr/bin/awk -f
 
 # Find CHaracter
 
-if [ $# -eq 0 ]
-then
-	echo "Usage: fch <charname>"
-	exit 2
-fi
-
-args="$@"
-awk -v charname="$args" '
-	$0 ~ charname {
-		printf "%s ",$0
-		system("9 unicode " $1)
+BEGIN {
+	if (ARGC < 2) {
+		print "Usage: fch <charname>"
+		exit 2
 	}
-' /opt/plan9/lib/unicode
+
+	charname = ARGV[1]
+	for (i = 2; i < ARGC; i++)
+		charname = charname" "ARGV[i];
+
+	while (getline <"/opt/plan9/lib/unicode")
+		if (match($0, charname)) {
+			desc = substr($0, length($1)+1, length($0))
+			"9 unicode " $1 | getline char; close(char)
+			printf "%s%s\n",char,desc
+		}
+}
