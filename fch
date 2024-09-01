@@ -1,6 +1,7 @@
 #!/usr/bin/awk -f
 
-# Find CHaracter
+# fch: find a unicode character
+# Requires plan9port to be installed at /opt/plan9
 
 BEGIN {
 	if (ARGC < 2) {
