@@ -1,0 +1,3 @@
+This repository contains miscellaneus scripts and programs. They were built for a
+Linux system with plan9port installed, but they should be pretty easy to port to
+other platforms.
