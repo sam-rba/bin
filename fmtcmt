@@ -1,0 +1,21 @@
+#!/usr/bin/sh
+
+# fmtcmt: format C99-style `//' comments
+# Usage: fmtcmt [ -w n ]
+# Options:
+#	-w n Wrap lines to n characters, including `// ' (default 90).
+
+defaultwidth=90
+
+# parse -w
+if [ "$#" -ge 2 ] && [ $1 = "-w" ]; then
+	width=$2
+else
+	width=$defaultwidth
+fi
+
+sed 's/^\/\///' |                   # strip //
+	sed -e 's/^ *//' -e 's/ *$//' | # strip leading and trailing blanks
+	fmt -w $(expr $width - 3) |     # wrap (-3 for "// ")
+	awk '{ print "// " $0 }' |      # prepend //
+	sed -z '$ s/\n*$//'             # strip tailing \n
