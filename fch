@@ -1,22 +1,33 @@
 #!/usr/bin/awk -f
 
 # fch: find a unicode character
-# Requires plan9port to be installed at /opt/plan9
+# Requires plan9port to be installed at $PLAN9
 
 BEGIN {
 	if (ARGC < 2) {
 		print "Usage: fch <charname>"
 		exit 2
 	}
-
 	charname = ARGV[1]
 	for (i = 2; i < ARGC; i++)
 		charname = charname" "ARGV[i];
 
-	while (getline <"/opt/plan9/lib/unicode")
+	root = ENVIRON["PLAN9"]
+	if (length(root) <= 0) {
+		print "fch: $PLAN9 not set"
+		exit 1
+	}
+	table = root"/lib/unicode"
+
+	while ((err = getline <table) > 0) {
 		if (match($0, charname)) {
 			desc = substr($0, length($1)+1, length($0))
 			"9 unicode " $1 | getline char; close(char)
 			printf "%s%s\n",char,desc
 		}
+	}
+	if (err < 0) { # getline failed
+		print "fch: failed to read from " table
+		exit 1
+	}
 }
